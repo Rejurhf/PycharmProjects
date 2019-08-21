@@ -46,6 +46,9 @@ cmake-build-*/
 # IntelliJ
 out/
 
+# PyCharm
+Navier-Stokes/venv/Lib/site-packages/*
+
 # mpeltonen/sbt-idea plugin
 .idea_modules/
 

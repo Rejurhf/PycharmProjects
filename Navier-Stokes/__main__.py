@@ -3,6 +3,6 @@
 # 1. 1D Linear Convection
 from steps.linearconvection1d import LinearConvection1D
 
-LinearConvection1D()
+LinearConvection1D().run_simulation()
 
 
