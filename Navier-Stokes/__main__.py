@@ -10,8 +10,8 @@ run_simulation(nx, nt, dt, c)
 nx - number of grid points; nt - number of timesteps we want to calculate;
 dt - amount of time each timestep covers (delta t); c - wave speed
 '''
-LinearConvection1D().run_simulation(41, 25, .025, 1)
+LinearConvection1D().run_simulation()
 
 # 2. Nonlinear Convection 1D
-NonlinearConvection1D.run_simulation()
+# NonlinearConvection1D.run_simulation()
 
