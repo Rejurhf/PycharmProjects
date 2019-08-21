@@ -1,6 +1,2 @@
 # PyCharm site-packages
-Navier-Stokes/venv/Lib/site-packages/
-!Navier-Stokes/venv/Lib/site-packages/pip-19.0.3-py3.7.egg/
-!Navier-Stokes/venv/Lib/site-packages/easy-install.pth
-!Navier-Stokes/venv/Lib/site-packages/setuptools-40.8.0-py3.7.egg
-!Navier-Stokes/venv/Lib/site-packages/setuptools.pth
+*.pyc
