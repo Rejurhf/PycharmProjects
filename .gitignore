@@ -2,3 +2,9 @@
 *.pyc
 *.venv
 Navier-Stokes/.idea/
+
+Navier-Stokes/venv/Lib/site-packages/mpmath-1.1.0-py3.7.egg-info/
+Navier-Stokes/venv/Lib/site-packages/mpmath/
+Navier-Stokes/venv/Lib/site-packages/sympy-1.4.dist-info/
+Navier-Stokes/venv/Lib/site-packages/sympy/
+Navier-Stokes/venv/share/
