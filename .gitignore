@@ -1,3 +1,4 @@
 # PyCharm site-packages
 *.pyc
 *.venv
+Navier-Stokes/.idea/
