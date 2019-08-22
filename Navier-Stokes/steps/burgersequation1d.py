@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt
 import sympy
 
 
-class BurgersEquatuin1D:
+class BurgersEquation1D:
     """
     Burgers' Equation 1D
     """
