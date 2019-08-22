@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt
 
 class Diffusion1D:
     """
-    Nonlinear Convection 1D
+    Diffusion 1D
     """
 
     iteration_number = 0
