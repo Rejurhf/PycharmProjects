@@ -6,6 +6,7 @@ from steps.nonlinearconvection1d import NonlinearConvection1D
 from steps.diffusion1d import Diffusion1D
 from steps.burgersequation1d import BurgersEquation1D
 from steps.linearconvection2d import LinearConvection2D
+from steps.nonlinearconvection2d import NonlinearConvection2D
 
 # 1. Linear Convection 1D
 '''
@@ -30,4 +31,7 @@ dt - amount of time each time step covers (delta t)
 # BurgersEquation1D().run_simulation()
 
 # 5. Linear Convection 2D
-LinearConvection2D().run_simulation()
+# LinearConvection2D().run_simulation()
+
+# 6. Nonlinear Convection 2D
+NonlinearConvection2D().run_simulation()
