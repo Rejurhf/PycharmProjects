@@ -11,7 +11,7 @@ class ChanelFlow:
     iteration_number = 0
 
     def __init__(self):
-        print("Init Chanel Flow")
+        print("Init Chanel  Flow")
 
     def run_simulation(self, _nx=41, _ny=41, _nt=1000, _nit=50, _c=5):
         nx = _nx
