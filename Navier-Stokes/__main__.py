@@ -11,6 +11,7 @@ from steps.diffusion2d import Diffusion2D
 from steps.burgersequation2d import BurgersEquation2D
 from steps.laplaceequation2d import LaplaceEquation2D
 from steps.poissonequation2d import PoissonEquation2D
+from steps.cavityflow import CavityFlow
 
 # 1. Linear Convection 1D
 '''
@@ -49,5 +50,8 @@ dt - amount of time each time step covers (delta t)
 # 9. Laplace Equation 2D
 # LaplaceEquation2D().run_simulation()
 
-# 9. Poisson Equation 2D
-PoissonEquation2D().run_simulation()
+# 10. Poisson Equation 2D
+# PoissonEquation2D().run_simulation()
+
+# 11. Poisson Equation 2D
+CavityFlow().run_simulation()
