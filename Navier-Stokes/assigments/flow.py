@@ -144,34 +144,6 @@ class Flow1:
 
             # save each plot at selected time step intervals (for debugging purposes)
             output_step = 10
-            if (n % 100 == 0):
-                if (n % output_step) == 0:
-                    fig = plt.figure(figsize=(100, 50), dpi=25)
-                    plt.contourf(X, Y, p, alpha=0.5)  ### plotting the pressure field as a contour
-                    plt.tick_params(axis='both', which='major', labelsize=40)
-                    cbar = plt.colorbar()
-                    cbar.ax.tick_params(labelsize=50)
-                    plt.contour(X, Y, p, cmap='cool', vmin=0, vmax=400)               ### plotting the pressure field outlines
-
-                    plt.contour(X, Y, u / v)
-                    plt.quiver(X[::qres, ::qres], Y[::qres, ::qres], u[::qres, ::qres],
-                               v[::qres, ::qres])  ##plotting velocity
-                    # plt.streamplot(X[::qres,::qres],Y[::qres,::qres],u[::qres,::qres],v[::qres,::qres],linewidth=2, cmap=plt.cm.autumn)
-
-                    # To overlay an artificial obstacle over the plot using plt.broken_barh
-                    plt.broken_barh([(x[lftb + 1], x[lftb + wdth - 2] - x[lftb + 1])],
-                                    (y[botb + 1], y[botb + dpth - 2] - y[botb + 1]), facecolors='grey', alpha=0.8)
-                    plt.xlabel('X')
-                    plt.ylabel('Y')
-                    plt.title('time_step = ' + str(n) + ' nu = ' + str(nu), fontsize=40)
-                    # plot only every 10 plots
-                    if (n / output_step) < 10:
-                        str_prepend = "0"
-                    else:
-                        str_prepend = ""
-                    # plt.savefig("plots/" + str(nu) + "_" + str_prepend + str(n / 5) + ".png", format="png")
-                    # plt.close()
-                    plt.show()
 
         return u, v, p
 
@@ -215,16 +187,24 @@ class Flow1:
 
         u, v, p = self.cavityFlow(nt, u, v, dt, dx, dy, p, rho, nu, botb, dpth, lftb, wdth, X, Y, u_start, nx, ny, qres, nit, x, y)
 
+        tmpU = u[::qres,::qres]
+        tmpV = v[::qres,::qres]
+
+        # np.savetxt('u', tmpU, delimiter=',', newline='\n', fmt='%1.4f')
+        # np.savetxt('v', tmpV, delimiter=',', newline='\n', fmt='%1.4f')
+
         # Plot the last figure on screen
         fig = plt.figure(figsize=(100,50), dpi=25)
         plt.contourf(X, Y, p, alpha=0.5)  # alpha - background intensity
-        plt.tick_params(axis='both', which='major', labelsize=40)
+        plt.tick_params(axis='both', which='major', labelsize=80)
         cbar = plt.colorbar()
-        cbar.ax.tick_params(labelsize=50)
+        cbar.ax.tick_params(labelsize=80)
         plt.contour(X, Y, p)
-        plt.quiver(X[::qres,::qres],Y[::qres,::qres],u[::qres,::qres],v[::qres,::qres]) ##plotting velocity
+        M = np.hypot(u[::qres,::qres],v[::qres,::qres])
+        plt.quiver(X[::qres,::qres],Y[::qres,::qres],u[::qres,::qres],v[::qres,::qres],M) ##plotting velocity
+        # plt.streamplot(X, Y, u, v, density=1)
         plt.broken_barh([(x[lftb+1],x[lftb+wdth-2]-x[lftb+1])], (y[botb+1],y[botb+dpth-2]-y[botb+1]), facecolors='grey', alpha=0.8)
         plt.xlabel('X')
-        plt.ylabel('Y');
-        plt.title('time_step = ' + str(nt) + ' nu = ' + str(nu), fontsize=40)
+        plt.ylabel('Y')
+        plt.title('time_step = ' + str(nt) + ' nu = ' + str(nu), fontsize=80)
         plt.show()

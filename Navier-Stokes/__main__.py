@@ -63,13 +63,10 @@ dt - amount of time each time step covers (delta t)
 """
 
 from assigments.flow import Flow1
-
-from mpl_toolkits.mplot3d import Axes3D
-from matplotlib import cm
-import matplotlib.pyplot as plt
-import numpy as np
-import math as mth
+from assigments.flow2d import Flow2d
 
 
-Flow1().runSimulation()
+# Flow1().runSimulation()
+Flow2d().runSimulation()
 
+# Animation().runAnimation()
