@@ -9,7 +9,27 @@ class Flow2d:
         print("flow 2d")
 
 
-    def calcUDecrease(self, u, v):
+    def calcObstacleBorders(self, u, xSize, ySize, obstacle, rounded=True):
+        xMul = (len(u[0]) - 1) / (xSize)
+        yMul = (len(u) - 1) / (ySize)
+
+        if rounded:
+            left = mth.ceil(obstacle[0] * xMul)
+            right = mth.floor((obstacle[0] + obstacle[1]) * xMul)
+            bottom = mth.ceil(obstacle[2] * yMul)
+            top = mth.floor((obstacle[2] + obstacle[3]) * yMul)
+        else:
+            left = obstacle[0] * xMul
+            right = (obstacle[0] + obstacle[1]) * xMul
+            bottom = obstacle[2] * yMul
+            top = (obstacle[2] + obstacle[3]) * yMul
+
+        return left, right, bottom, top
+
+
+    def calcUDecrease(self, u, v, xSize, ySize, obstacle):
+        left, right, bottom, top = self.calcObstacleBorders(u, xSize, ySize, obstacle, rounded=False)
+
         minXPos = len(u[0])
         maxXPos = -1
         minYPos = len(u)
@@ -31,7 +51,9 @@ class Flow2d:
         mul = 0.9
         iter = 0
         yHeight = maxYPos - minYPos + 1
-        begYPos = minYPos + yHeight
+        r = (top - bottom) / 2
+        begYPos = bottom + r
+        begXPos = left - r/2
         if yHeight % 2 != 0:
             yHeight += 1
 
@@ -55,6 +77,35 @@ class Flow2d:
         #         print("-------------")
         #     iter += 1
         #     mul *= 0.5
+        toVisitList = [(int(begXPos), int(begYPos))]
+        visitedList = []
+        print("Start pos: {}, {} {} {}".format(toVisitList[0], begYPos, minXPos, r))
+
+        while len(toVisitList) > 0:
+            currElem = toVisitList.pop()
+            visitedList.append(currElem)
+
+            distanceToMidd = mth.sqrt((minXPos - currElem[0])**2 + (begYPos - currElem[1])**2)
+            distanceToObs = np.absolute(minXPos - currElem[0])
+            # if (distanceToMidd + distanceToObs)/2 > 0.9*r:
+            #     u[currElem[1], currElem[0]] = u[currElem[1], currElem[0]] * ((2/5*((distanceToMidd+distanceToObs)/(3.2*r)-0.5))+0.8)
+            #     print(u[currElem[1], currElem[0]], (distanceToMidd+distanceToObs)/(3.2*r), 2/5*((distanceToMidd+distanceToObs)/(3.2*r)-0.5))
+            # else:
+            mul = ((distanceToMidd+distanceToObs)/(3.2*r))
+            u[currElem[1],currElem[0]] = u[currElem[1],currElem[0]]*mul
+
+            for x in [-1, 0, 1]:
+                for y in [-1, 0, 1]:
+                    tmpElem = (currElem[0]+x, currElem[1]+y)
+                    # Calculate distance from middle of obstacle
+                    tmpDistance = mth.sqrt((begXPos - tmpElem[0])**2 + (begYPos - tmpElem[1])**2)
+                    # If new elem is in radios and its value is 1 and it is not in (visitedList and toVisitList) then
+                    # add to toVisitList
+                    if tmpDistance < r+1 and u[tmpElem[1], tmpElem[0]] == 1 and \
+                            tmpElem not in visitedList and tmpElem not in toVisitList:
+                        toVisitList.append(tmpElem)
+                        print("{} {} {}".format(currElem, tmpElem, tmpDistance))
+
 
         mul = 0.9
         iter = 0
@@ -80,13 +131,7 @@ class Flow2d:
 
 
     def calcInObstacleFlow(self, u, v, xSize, ySize, obstacle):
-        xMul = (len(u[0])-1)/(xSize)
-        yMul = (len(u)-1)/(ySize)
-
-        left = mth.ceil(obstacle[0]*xMul)
-        right = mth.floor((obstacle[0]+obstacle[1])*xMul)
-        bottom = mth.ceil(obstacle[2]*yMul)
-        top = mth.floor((obstacle[2]+obstacle[3])*yMul)
+        left, right, bottom, top = self.calcObstacleBorders(u, xSize, ySize, obstacle, rounded=True)
 
         u[bottom:top+1, left:right+1] = 0
 
@@ -111,11 +156,12 @@ class Flow2d:
         u = np.ones((ny, nx))    # for u-velocity I initialise to 1 everywhere
 
         u, v = self.calcInObstacleFlow(u, v, xSize, ySize, obstacle)
-        u, v = self.calcUDecrease(u, v)
+        u, v = self.calcUDecrease(u, v, xSize, ySize, obstacle)
 
         p = np.zeros((ny, nx)) # np.add(np.absolute(u), np.absolute(v))
-
+        p = u
         # u[u == 1] = 0
+        u[0,0] = 2.3
         self.showPlot(X, Y, u, v, p, obstacle, "Title")
 
 

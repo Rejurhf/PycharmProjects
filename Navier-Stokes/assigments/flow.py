@@ -163,11 +163,11 @@ class Flow1:
         y = np.linspace(0,y_span,ny) # last point included, so exactly ny points
         X,Y = np.meshgrid(x,y)       # makes 2-dimensional mesh grid
 
-        botb  = 21           # bottom boundary of obstacle
-        dpth  = 59           # obstacle depth
+        botb  = 30           # bottom boundary of obstacle
+        dpth  = 40           # obstacle depth
 
-        lftb   = 70          # left boundary of obstacle
-        wdth   = 15           # obstacle width
+        lftb   = 110          # left boundary of obstacle
+        wdth   = 20           # obstacle width
 
         Re = 50              # range from 10s to 100s
         nt = 1000            # timesteps
@@ -187,8 +187,8 @@ class Flow1:
 
         u, v, p = self.cavityFlow(nt, u, v, dt, dx, dy, p, rho, nu, botb, dpth, lftb, wdth, X, Y, u_start, nx, ny, qres, nit, x, y)
 
+        p = np.absolute(u)
         # p = np.add(np.absolute(u), np.absolute(v))
-        # p = np.absolute(v)
         # tmpU = u[::qres,::qres]
         # tmpV = v[::qres,::qres]
         # np.savetxt('u', tmpU, delimiter=',', newline='\n', fmt='%1.4f')
