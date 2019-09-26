@@ -66,7 +66,7 @@ from assigments.flow import Flow1
 from assigments.flow2d import Flow2d
 
 
-# Flow1().runSimulation()
-Flow2d().runSimulation()
+Flow1().runSimulation()
+# Flow2d().runSimulation()
 
 # Animation().runAnimation()
