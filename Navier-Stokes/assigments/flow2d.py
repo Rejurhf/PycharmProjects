@@ -8,6 +8,18 @@ class Flow2d:
     def __init__(self):
         print("flow 2d")
 
+    def changeScope(self, min, max, newMin, newMax, value):
+        # reassign value
+        out = value
+        # calc percentage value of (max - min)
+        out = (out - min) / (max - min)
+        # get value from new scope using percentage value
+        out = out * (newMax - newMin)
+        # add value to min
+        out = newMin + out
+
+        return out
+
 
     def calcObstacleBorders(self, u, xSize, ySize, obstacle, rounded=True):
         xMul = (len(u[0]) - 1) / (xSize)
@@ -48,6 +60,7 @@ class Flow2d:
 
         print("X: {} {}, Y: {} {}".format(minXPos, maxXPos, minYPos, maxYPos))
 
+        # Calc constants
         mul = 0.9
         iter = 0
         yHeight = maxYPos - minYPos + 1
@@ -58,7 +71,8 @@ class Flow2d:
             yHeight += 1
 
 
-        # Do work before obstacle
+        # Do work before obstacle --------------------------------------------------------
+
         # while yHeight - 2*iter > 0:
         #     count = 0
         #     for i in range(int(yHeight/2)-1, iter-1, -1):
@@ -87,12 +101,17 @@ class Flow2d:
 
             distanceToMidd = mth.sqrt((minXPos - currElem[0])**2 + (begYPos - currElem[1])**2)
             distanceToObs = np.absolute(minXPos - currElem[0])
-            # if (distanceToMidd + distanceToObs)/2 > 0.9*r:
-            #     u[currElem[1], currElem[0]] = u[currElem[1], currElem[0]] * ((2/5*((distanceToMidd+distanceToObs)/(3.2*r)-0.5))+0.8)
-            #     print(u[currElem[1], currElem[0]], (distanceToMidd+distanceToObs)/(3.2*r), 2/5*((distanceToMidd+distanceToObs)/(3.2*r)-0.5))
-            # else:
-            mul = ((distanceToMidd+distanceToObs)/(3.2*r))
-            u[currElem[1],currElem[0]] = u[currElem[1],currElem[0]]*mul
+            mul = (distanceToMidd/(1.5*r))
+
+            # Those ifs makes ellipse range around obstacle
+            if distanceToMidd + (16*distanceToObs/r) - r/10 <= r:
+                u[currElem[1], currElem[0]] = u[currElem[1], currElem[0]] * self.changeScope(0, 1, 0, 0.6, mul)
+            elif distanceToMidd + (8*distanceToObs/r) - r/10 <= r:
+                u[currElem[1], currElem[0]] = u[currElem[1], currElem[0]] * self.changeScope(0, 1, 0.125, 0.7, mul)
+            elif distanceToMidd + (distanceToObs/r) - r/10 <= r:
+                u[currElem[1], currElem[0]] = u[currElem[1], currElem[0]] * self.changeScope(0, 1, 0.25, 0.8, mul)
+            else:
+                u[currElem[1], currElem[0]] = u[currElem[1], currElem[0]] * self.changeScope(0, 1, 0.5, 0.9, mul)
 
             for x in [-1, 0, 1]:
                 for y in [-1, 0, 1]:
@@ -101,15 +120,16 @@ class Flow2d:
                     tmpDistance = mth.sqrt((begXPos - tmpElem[0])**2 + (begYPos - tmpElem[1])**2)
                     # If new elem is in radios and its value is 1 and it is not in (visitedList and toVisitList) then
                     # add to toVisitList
-                    if tmpDistance < r+1 and u[tmpElem[1], tmpElem[0]] == 1 and \
+                    if tmpDistance <= r+0.7 and u[tmpElem[1], tmpElem[0]] == 1 and \
                             tmpElem not in visitedList and tmpElem not in toVisitList:
                         toVisitList.append(tmpElem)
-                        print("{} {} {}".format(currElem, tmpElem, tmpDistance))
+                        # print("{} {} {}".format(currElem, tmpElem, tmpDistance))
+            # print(currElem, np.absolute(begYPos - currElem[1]), begYPos, r)
 
 
+        # Do work after obstacle ---------------------------------------------------
         mul = 0.9
         iter = 0
-        # Do work after obstacle
         while yHeight - 2*iter > 0:
             count = 0
             for i in range(int(yHeight/2)-1, iter-1, -1):
@@ -126,6 +146,9 @@ class Flow2d:
                 # print("-------------")
             iter += 1
             mul *= 0.6
+
+        for i in range(5, 19):
+            print("({}, {}) {}".format(i, 13, u[13, i]))
 
         return u, v
 
