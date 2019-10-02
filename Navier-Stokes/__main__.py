@@ -64,10 +64,11 @@ dt - amount of time each time step covers (delta t)
 
 from assigments.flow import Flow1
 from assigments.flow2d import Flow2d
+from assigments.flow3 import Flow3
 
 
 # Flow1().runSimulation()
-Flow2d().runSimulation()
-
+# Flow2d().runSimulation()
+Flow3().runSimulation()
 
 # Animation().runAnimation()
