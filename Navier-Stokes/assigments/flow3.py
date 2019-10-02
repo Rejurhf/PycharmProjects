@@ -34,11 +34,24 @@ class Flow3:
         return u, v
 
 
+    def isPointInObstacle(self, point, u, xSize, ySize, obstacle):
+        left, right, bottom, top = self.calcObstacleBorders(u, xSize, ySize, obstacle)
+
+        if left <= point[0] <= right and bottom <= point[1] <= top:
+            return True
+        return False
+
+
     def getFlowPath(self, u, v, xSize, ySize, obstacle):
         left, right, bottom, top = self.calcObstacleBorders(u, xSize, ySize, obstacle, rounded=True)
 
+        # Number of x and y points in arrays
+        nX = len(u[0])
+        nY = len(u)
+
+        print("start")
         # start flow from first points
-        for y in range(0, ySize):
+        for y in range(0, nY):
             # visited list if point in visited list then closed flow
             visitedPoints = []
 
@@ -47,13 +60,32 @@ class Flow3:
             posY = y
 
             # Flow to the end
-            while posX < xSize:
-                posX = xSize
+            while posX < nX:
+                visitedPoints.append((posX, posY))
+                if y != posY and (posY < y and not self.isPointInObstacle((posX, posY+1), u, xSize, ySize, obstacle) or \
+                        posY > y and not self.isPointInObstacle((posX, posY-1), u, xSize, ySize, obstacle)):
+                    if posY < y:
+                        posY += 1
+                    else:
+                        posY -= 1
+                    print(posX, posY)
+                elif not self.isPointInObstacle((posX + 1, posY), u, xSize, ySize, obstacle):
+                    posX += 1
+                elif not self.isPointInObstacle((posX, posY + 1), u, xSize, ySize, obstacle):
+                    posY += 1
+                elif not self.isPointInObstacle((posX, posY - 1), u, xSize, ySize, obstacle):
+                    posY -= 1
+                else:
+                    posX = nX
 
+            if visitedPoints:
+                for point in visitedPoints:
+                    if u[point[1], point[0]] == 0:
+                        u[point[1], point[0]] = 1
+                    else:
+                        u[point[1], point[0]] += 0.1
 
-
-
-
+        print("end")
 
         return u, v
 
