@@ -42,6 +42,38 @@ class Flow3:
         return False
 
 
+    def getShortestRoute(self, posX, posY, u, xSize, ySize, obstacle):
+        upPosX = posX
+        upPosY = posY + 1
+        upVisitedList = []
+        downPosX = posX
+        downPosY = posY - 1
+        downVisitedList = []
+
+        while upPosX == posX:
+            upVisitedList.append((upPosX, upPosY))
+            if not self.isPointInObstacle((upPosX+1, upPosY), u, xSize, ySize, obstacle):
+                upPosX += 1
+            elif not self.isPointInObstacle((upPosX, upPosY+1), u, xSize, ySize, obstacle):
+                upPosY += 1
+            else:
+                upPosX -= 1
+
+        while downPosX == posX:
+            downVisitedList.append((downPosX, downPosY))
+            if not self.isPointInObstacle((downPosX+1, downPosY), u, xSize, ySize, obstacle):
+                downPosX += 1
+            elif not self.isPointInObstacle((downPosX, downPosY-1), u, xSize, ySize, obstacle):
+                downPosY -= 1
+            else:
+                downPosX -= 1
+
+        if len(downVisitedList) > len(upVisitedList):
+            return upPosX, upPosY, upVisitedList
+        else:
+            return downPosX, downPosY, downVisitedList
+
+
     def getFlowPath(self, u, v, xSize, ySize, obstacle):
         left, right, bottom, top = self.calcObstacleBorders(u, xSize, ySize, obstacle, rounded=True)
 
@@ -52,6 +84,7 @@ class Flow3:
         print("start")
         # start flow from first points
         for y in range(0, nY):
+            print("Start row: {}".format(y))
             # visited list if point in visited list then closed flow
             visitedPoints = []
 
@@ -62,28 +95,44 @@ class Flow3:
             # Flow to the end
             while posX < nX:
                 visitedPoints.append((posX, posY))
-                if y != posY and (posY < y and not self.isPointInObstacle((posX, posY+1), u, xSize, ySize, obstacle) or \
-                        posY > y and not self.isPointInObstacle((posX, posY-1), u, xSize, ySize, obstacle)):
-                    if posY < y:
+
+                # Determine action
+                if not self.isPointInObstacle((posX + 1, posY), u, xSize, ySize, obstacle):
+                    if posY < y and \
+                            not self.isPointInObstacle((posX, posY + 1), u, xSize, ySize, obstacle) and \
+                            not self.isPointInObstacle((posX+1, posY + 1), u, xSize, ySize, obstacle):
                         posY += 1
-                    else:
+                    elif posY > y and \
+                            not self.isPointInObstacle((posX, posY - 1), u, xSize, ySize, obstacle) and \
+                            not self.isPointInObstacle((posX+1, posY - 1), u, xSize, ySize, obstacle):
                         posY -= 1
-                    print(posX, posY)
-                elif not self.isPointInObstacle((posX + 1, posY), u, xSize, ySize, obstacle):
-                    posX += 1
-                elif not self.isPointInObstacle((posX, posY + 1), u, xSize, ySize, obstacle):
+                    else:
+                        posX += 1
+
+                elif self.isPointInObstacle((posX+1, posY), u, xSize, ySize, obstacle) and \
+                        not self.isPointInObstacle((posX, posY + 1), u, xSize, ySize, obstacle) and \
+                        not self.isPointInObstacle((posX, posY - 1), u, xSize, ySize, obstacle):
+                    posX, posY, subVisitedList = self.getShortestRoute(posX, posY, u, xSize, ySize, obstacle)
+                    visitedPoints.extend(subVisitedList)
+
+                elif self.isPointInObstacle((posX+1, posY), u, xSize, ySize, obstacle) and \
+                        not self.isPointInObstacle((posX, posY + 1), u, xSize, ySize, obstacle):
                     posY += 1
-                elif not self.isPointInObstacle((posX, posY - 1), u, xSize, ySize, obstacle):
+
+                elif self.isPointInObstacle((posX+1, posY), u, xSize, ySize, obstacle) and \
+                        not self.isPointInObstacle((posX, posY - 1), u, xSize, ySize, obstacle):
                     posY -= 1
+
                 else:
                     posX = nX
 
+            # Add path to flow
             if visitedPoints:
                 for point in visitedPoints:
                     if u[point[1], point[0]] == 0:
                         u[point[1], point[0]] = 1
                     else:
-                        u[point[1], point[0]] += 0.1
+                        u[point[1], point[0]] += 0.2
 
         print("end")
 
